@@ -1,0 +1,4 @@
+discord.py==1.7.2
+loguru==0.5.3
+discord==1.0.1
+python-dotenv==0.17.1
