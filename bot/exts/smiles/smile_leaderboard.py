@@ -37,11 +37,14 @@ class SmileLeaderboard(commands.Cog):
   async def leaderboard(self, ctx: Context):
 
     d = {'fields': []}
-    for user_id, count in self.reaction_counts.items():
-      d['fields'].append({
-          'name': (await self.bot.fetch_user(user_id)).name,
-          'value': f'**{count}** smiles'
-      })
+    for i, (user_id, count) in enumerate(sorted(self.reaction_counts.items(), key=lambda item: item[1], reverse=True)):
+      if i < 10:
+        d['fields'].append({
+            'name': (await self.bot.fetch_user(user_id)).name,
+            'value': f'**{count}** smiles'
+        })
+      else:
+        break
 
     embed = Embed.from_dict(d)
 
