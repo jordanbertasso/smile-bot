@@ -56,7 +56,8 @@ class SmileLeaderboard(commands.Cog):
 
   @commands.command(hidden=True)
   @is_jordan()
-  async def set_score(self, ctx: Context, member: User, score: int):
-    self.reaction_counts[member.id] = score
+  async def set_score(self, ctx: Context, user_id: int, score: int):
+    self.reaction_counts[user_id] = score
 
-    await ctx.send(f"Set {member.name}'s score to {score}")
+    user = await self.bot.fetch_user(user_id)
+    await ctx.send(f"Set {user.name}'s score to {score}")
