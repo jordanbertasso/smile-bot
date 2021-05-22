@@ -1,4 +1,5 @@
-from discord import Reaction, User, Member, Emoji, PartialEmoji, Embed
+from ...util.checks import is_jordan
+from discord import Reaction, User, Member, Emoji, PartialEmoji, Embed, utils
 from collections import defaultdict
 from typing import Optional, Union
 from discord.ext import commands
@@ -52,3 +53,10 @@ class SmileLeaderboard(commands.Cog):
       await ctx.send('None yet')
     else:
       await ctx.send(embed=embed)
+
+  @commands.command(hidden=True)
+  @is_jordan()
+  async def set_score(self, ctx: Context, member: User, score: int):
+    self.reaction_counts[member.id] = score
+
+    await ctx.send(f"Set {member.name}'s score to {score}")
