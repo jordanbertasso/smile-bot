@@ -18,7 +18,7 @@ class SmileLeaderboard(commands.Cog):
   def get_initial_reaction_counts(self):
     try:
       with open('./data/leaderboard.json', 'r') as f:
-        d = {int(k): v for k,v in json.load(f).items()}
+        d = {int(k): v for k, v in json.load(f).items()}
         print(f"Saved scores: {d}")
         return defaultdict(int, d)
     except FileNotFoundError:
@@ -52,11 +52,19 @@ class SmileLeaderboard(commands.Cog):
       self.save_reaction_counts()
       logger.info(self.reaction_counts)
 
-  @commands.command(aliases=['lb'])
+  @commands.command(aliases=['lb'], help="Get the top 10 smilers")
   async def leaderboard(self, ctx: Context):
+    """Send an embed with the current top 10 smilers and their number of smiles
+
+    Args:
+        ctx (Context): Invocation context
+    """
 
     d = {'fields': [], 'color': 0x5A8041}
-    for i, (user_id, count) in enumerate(sorted(self.reaction_counts.items(), key=lambda item: item[1], reverse=True)):
+    for i, (user_id, count) in enumerate(
+        sorted(self.reaction_counts.items(),
+               key=lambda item: item[1],
+               reverse=True)):
       if i < 10:
         d['fields'].append({
             'name': (await self.bot.fetch_user(user_id)).name,
@@ -72,10 +80,16 @@ class SmileLeaderboard(commands.Cog):
     else:
       await ctx.send(embed=embed)
 
-  @commands.command(aliases=['m'])
+  @commands.command(aliases=['m'], help='Check your smiles') 
   async def me(self, ctx: Context):
-    author: Union[User, Member ]= ctx.author
-    await ctx.send(f"You have smiled **{self.reaction_counts[author.id]}** times")
+    """Check your score
+
+    Args:
+        ctx (Context): Invocation context
+    """
+    author: Union[User, Member] = ctx.author
+    await ctx.send(
+        f"You have smiled **{self.reaction_counts[author.id]}** times")
 
   @commands.command(hidden=True)
   @is_jordan()
