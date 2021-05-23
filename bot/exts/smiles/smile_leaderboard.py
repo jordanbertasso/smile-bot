@@ -55,7 +55,7 @@ class SmileLeaderboard(commands.Cog):
   @commands.command(aliases=['lb'])
   async def leaderboard(self, ctx: Context):
 
-    d = {'fields': []}
+    d = {'fields': [], 'color': 0x5A8041}
     for i, (user_id, count) in enumerate(sorted(self.reaction_counts.items(), key=lambda item: item[1], reverse=True)):
       if i < 10:
         d['fields'].append({
@@ -71,6 +71,11 @@ class SmileLeaderboard(commands.Cog):
       await ctx.send('None yet')
     else:
       await ctx.send(embed=embed)
+
+  @commands.command(aliases=['m'])
+  async def me(self, ctx: Context):
+    author: Union[User, Member ]= ctx.author
+    await ctx.send(f"You have smiled **{self.reaction_counts[author.id]}** times")
 
   @commands.command(hidden=True)
   @is_jordan()
