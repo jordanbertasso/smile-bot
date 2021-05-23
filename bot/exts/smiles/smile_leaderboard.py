@@ -1,3 +1,4 @@
+import pickle
 from ...util.checks import is_jordan
 from discord import Reaction, User, Member, Emoji, PartialEmoji, Embed, utils
 from collections import defaultdict
@@ -5,12 +6,26 @@ from typing import Optional, Union
 from discord.ext import commands
 from discord.ext.commands.context import Context
 from loguru import logger
+import json
 
 
 class SmileLeaderboard(commands.Cog):
   def __init__(self, bot: commands.Bot):
     self.bot = bot
-    self.reaction_counts = defaultdict(int)
+    self.reaction_counts = self.get_initial_reaction_counts()
+
+  def get_initial_reaction_counts(self):
+    try:
+      with open('./data/leaderboard.json', 'r') as f:
+        d = {int(k): v for k,v in json.load(f).items()}
+        print(f"Saved scores: {d}")
+        return defaultdict(int, d)
+    except FileNotFoundError:
+      return defaultdict(int)
+
+  def save_reaction_counts(self):
+    with open('./data/leaderboard.json', 'w') as f:
+      json.dump(self.reaction_counts, f)
 
   @commands.Cog.listener()
   async def on_reaction_add(self, reaction: Reaction, user: Union[Member,
@@ -21,6 +36,7 @@ class SmileLeaderboard(commands.Cog):
     if 'smile' in emoji_name:
       logger.info(f'Adding smile for {user.name}#{user.discriminator}')
       self.reaction_counts[user.id] += 1
+      self.save_reaction_counts()
       logger.info(self.reaction_counts)
 
   @commands.Cog.listener()
@@ -32,6 +48,7 @@ class SmileLeaderboard(commands.Cog):
     if 'smile' in emoji_name:
       logger.info(f'Removing smile for {user.name}#{user.discriminator}')
       self.reaction_counts[user.id] -= 1
+      self.save_reaction_counts()
       logger.info(self.reaction_counts)
 
   @commands.command(aliases=['lb'])

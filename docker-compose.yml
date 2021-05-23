@@ -1,0 +1,12 @@
+version: "3.9"
+
+services:
+  bot:
+    build:
+      context: .
+    env_file:
+      - .env
+    volumes:
+      - ./data:/bot/data
+    restart: unless-stopped
+
