@@ -130,7 +130,7 @@ class SmileLeaderboard(commands.Cog):
   @cog_ext.cog_slash(name="me",
                      description="Count your smiles",
                      guild_ids=[constants.MACS_GUILD_ID])
-  async def me(self, ctx: SlashContext):
+  async def me_slash(self, ctx: SlashContext):
     """Check your score
 
     Args:
