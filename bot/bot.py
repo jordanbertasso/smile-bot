@@ -1,5 +1,6 @@
 from discord import Embed, Intents
 from discord.ext import commands
+from discord_slash import SlashCommand
 from loguru import logger
 
 from . import constants
@@ -13,6 +14,8 @@ class Bot(commands.Bot):
     intents.presences = True
 
     super().__init__(command_prefix=constants.PREFIX, intents=intents)
+
+    SlashCommand(self, sync_commands=True, sync_on_cog_reload=True)
     self.add_cog(SmileLeaderboard(self))
 
   def run(self) -> None:

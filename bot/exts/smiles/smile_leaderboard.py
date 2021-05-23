@@ -5,7 +5,10 @@ from typing import Optional, Union
 from discord import Embed, Emoji, Member, PartialEmoji, Reaction, User, utils
 from discord.ext import commands
 from discord.ext.commands.context import Context
+from discord_slash import SlashContext, cog_ext
 from loguru import logger
+
+from bot import constants
 
 from ...util.checks import is_jordan
 
@@ -52,7 +55,10 @@ class SmileLeaderboard(commands.Cog):
       self.save_reaction_counts()
       logger.info(self.reaction_counts)
 
-  @commands.command(aliases=['lb'], help="Get the top 10 smilers")
+  @commands.command(
+      aliases=['lb'],
+      help="Get the top 10 smilers",
+  )
   async def leaderboard(self, ctx: Context):
     """Send an embed with the current top 10 smilers and their number of smiles
 
@@ -80,8 +86,51 @@ class SmileLeaderboard(commands.Cog):
     else:
       await ctx.send(embed=embed)
 
-  @commands.command(aliases=['m'], help='Check your smiles') 
+  @cog_ext.cog_slash(name="leaderboard",
+                     description="Smilers",
+                     guild_ids=[constants.MACS_GUILD_ID])
+  async def leaderboard_slash(self, ctx: SlashContext):
+    """Send an embed with the current top 10 smilers and their number of smiles
+
+    Args:
+        ctx (Context): Invocation context
+    """
+
+    d = {'fields': [], 'color': 0x5A8041}
+    for i, (user_id, count) in enumerate(
+        sorted(self.reaction_counts.items(),
+               key=lambda item: item[1],
+               reverse=True)):
+      if i < 10:
+        d['fields'].append({
+            'name': (await self.bot.fetch_user(user_id)).name,
+            'value': f'**{count}** smiles'
+        })
+      else:
+        break
+
+    embed = Embed.from_dict(d)
+
+    if not d['fields']:
+      await ctx.send('None yet')
+    else:
+      await ctx.send(embed=embed)
+
+  @commands.command(aliases=['m'], help='Check your smiles')
   async def me(self, ctx: Context):
+    """Check your score
+
+    Args:
+        ctx (Context): Invocation context
+    """
+    author: Union[User, Member] = ctx.author
+    await ctx.send(
+        f"You have smiled **{self.reaction_counts[author.id]}** times")
+
+  @cog_ext.cog_slash(name="me",
+                     description="Count your smiles",
+                     guild_ids=[constants.MACS_GUILD_ID])
+  async def me(self, ctx: SlashContext):
     """Check your score
 
     Args:
