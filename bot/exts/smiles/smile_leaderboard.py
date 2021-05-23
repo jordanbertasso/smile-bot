@@ -1,12 +1,13 @@
-import pickle
-from ...util.checks import is_jordan
-from discord import Reaction, User, Member, Emoji, PartialEmoji, Embed, utils
+import json
 from collections import defaultdict
 from typing import Optional, Union
+
+from discord import Embed, Emoji, Member, PartialEmoji, Reaction, User, utils
 from discord.ext import commands
 from discord.ext.commands.context import Context
 from loguru import logger
-import json
+
+from ...util.checks import is_jordan
 
 
 class SmileLeaderboard(commands.Cog):

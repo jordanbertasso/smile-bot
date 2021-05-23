@@ -1,6 +1,8 @@
-from .. import constants
 from discord.ext import commands
 from discord.ext.commands.context import Context
+
+from .. import constants
+
 
 def is_jordan():
   def predicate(ctx: Context):
