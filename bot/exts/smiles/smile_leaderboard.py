@@ -53,7 +53,11 @@ class SmileLeaderboard(commands.Cog):
     if reaction.message.channel.type == ChannelType.private:
       return
     emoji: Union[Emoji, PartialEmoji, str] = reaction.emoji
-    emoji_name: Optional[str] = emoji.name
+    try:
+      emoji_name: Optional[str] = emoji.name
+    except AttributeError:
+      emoji_name: emoji
+
 
     if 'smile' in emoji_name:
       logger.info(f'Removing smile for {user.name}#{user.discriminator}')
