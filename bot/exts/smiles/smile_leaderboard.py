@@ -146,7 +146,30 @@ class SmileLeaderboard(commands.Cog):
     await ctx.send(
         f"You have smiled **{self.reaction_counts[author.id]}** times")
 
-  @commands.command(hidden=True)
+  @commands.command(aliases=['s'], help='Check someone elses smiles')
+  async def score(self, ctx: Context, user_id: int):
+    """Check someone elses score
+
+    Args:
+        ctx (Context): Invocation context
+    """
+    user = await self.bot.fetch_user(user_id)
+    await ctx.send(
+        f"{user.name} has smiled **{self.reaction_counts[user.id]}** times")
+
+  @cog_ext.cog_slash(name="score",
+                     description="Count someones smiles",
+                     guild_ids=[constants.MACS_GUILD_ID])
+  async def score_slash(self, ctx: SlashContext, user_id: str):
+    """Check someone elses score
+
+    Args:
+        ctx (Context): Invocation context
+    """
+    user = await self.bot.fetch_user(int(user_id))
+    await ctx.send(
+        f"{user.name} has smiled **{self.reaction_counts[user.id]}** times")
+
   @is_jordan()
   async def set_score(self, ctx: Context, user_id: int, score: int):
     self.reaction_counts[user_id] = score
