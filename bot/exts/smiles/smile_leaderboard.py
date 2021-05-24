@@ -58,6 +58,7 @@ class SmileLeaderboard(commands.Cog):
     except AttributeError:
       emoji_name: emoji
       print(emoji_name)
+      print(user)
 
 
     if 'smile' in emoji_name:
