@@ -11,7 +11,7 @@ from loguru import logger
 
 from bot import constants
 
-from ...util.checks import is_jordan
+from ...util.checks import in_botspam, is_jordan
 
 
 class SmileLeaderboard(commands.Cog):
@@ -60,7 +60,6 @@ class SmileLeaderboard(commands.Cog):
       print(emoji_name)
       print(user)
 
-
     if 'smile' in emoji_name:
       logger.info(f'Removing smile for {user.name}#{user.discriminator}')
       self.reaction_counts[user.id] -= 1
@@ -71,6 +70,7 @@ class SmileLeaderboard(commands.Cog):
       aliases=['lb'],
       help="Get the top 10 smilers",
   )
+  @in_botspam()
   async def leaderboard(self, ctx: Context):
     """Send an embed with the current top 10 smilers and their number of smiles
 
@@ -101,6 +101,7 @@ class SmileLeaderboard(commands.Cog):
   @cog_ext.cog_slash(name="leaderboard",
                      description="Smilers",
                      guild_ids=[constants.MACS_GUILD_ID])
+  @in_botspam()
   async def leaderboard_slash(self, ctx: SlashContext):
     """Send an embed with the current top 10 smilers and their number of smiles
 

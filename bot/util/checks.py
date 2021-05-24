@@ -9,3 +9,10 @@ def is_jordan():
     return ctx.message.author.id == constants.JORDAN_ID
 
   return commands.check(predicate)
+
+
+def in_botspam():
+  def predicate(ctx: Context):
+    return ctx.channel.id == constants.BOT_SPAM_CHANNEL_ID
+
+  return commands.check(predicate)
