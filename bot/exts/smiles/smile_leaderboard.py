@@ -3,6 +3,7 @@ from collections import defaultdict
 from typing import Optional, Union
 
 from discord import Embed, Emoji, Member, PartialEmoji, Reaction, User, utils
+from discord.enums import ChannelType
 from discord.ext import commands
 from discord.ext.commands.context import Context
 from discord_slash import SlashContext, cog_ext
@@ -34,6 +35,9 @@ class SmileLeaderboard(commands.Cog):
   @commands.Cog.listener()
   async def on_reaction_add(self, reaction: Reaction, user: Union[Member,
                                                                   User]):
+    if reaction.message.channel.type == ChannelType.private:
+      return
+
     emoji: Union[Emoji, PartialEmoji, str] = reaction.emoji
     emoji_name: Optional[str] = emoji.name
 
@@ -46,6 +50,8 @@ class SmileLeaderboard(commands.Cog):
   @commands.Cog.listener()
   async def on_reaction_remove(self, reaction: Reaction, user: Union[Member,
                                                                      User]):
+    if reaction.message.channel.type == ChannelType.private:
+      return
     emoji: Union[Emoji, PartialEmoji, str] = reaction.emoji
     emoji_name: Optional[str] = emoji.name
 
