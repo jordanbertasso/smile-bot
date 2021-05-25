@@ -9,8 +9,7 @@ from discord.ext.commands.context import Context
 from discord_slash import SlashContext, cog_ext
 from loguru import logger
 
-from bot import constants
-
+from ... import constants
 from ...util.checks import in_botspam, is_jordan
 
 
@@ -18,6 +17,9 @@ class SmileLeaderboard(commands.Cog):
   def __init__(self, bot: commands.Bot):
     self.bot = bot
     self.reaction_counts = self.get_initial_reaction_counts()
+
+  def cog_check(self, ctx: Context):
+    return in_botspam(ctx)
 
   def get_initial_reaction_counts(self):
     try:
@@ -70,7 +72,6 @@ class SmileLeaderboard(commands.Cog):
       aliases=['lb'],
       help="Get the top 10 smilers",
   )
-  @in_botspam()
   async def leaderboard(self, ctx: Context):
     """Send an embed with the current top 10 smilers and their number of smiles
 
@@ -98,16 +99,18 @@ class SmileLeaderboard(commands.Cog):
     else:
       await ctx.send(embed=embed)
 
-  @cog_ext.cog_slash(name="leaderboard",
-                     description="Smilers",
-                     guild_ids=[constants.MACS_GUILD_ID])
-  @in_botspam()
+  @cog_ext.cog_slash(
+      name="leaderboard",
+      description="Smilers",
+      guild_ids=[constants.MACS_GUILD_ID, constants.DEV_GUILD_ID])
   async def leaderboard_slash(self, ctx: SlashContext):
     """Send an embed with the current top 10 smilers and their number of smiles
 
     Args:
         ctx (Context): Invocation context
     """
+    if not self.cog_check(ctx):
+      return
 
     d = {'fields': [], 'color': 0x5A8041}
     for i, (user_id, count) in enumerate(
@@ -140,15 +143,19 @@ class SmileLeaderboard(commands.Cog):
     await ctx.send(
         f"You have smiled **{self.reaction_counts[author.id]}** times")
 
-  @cog_ext.cog_slash(name="me",
-                     description="Count your smiles",
-                     guild_ids=[constants.MACS_GUILD_ID])
+  @cog_ext.cog_slash(
+      name="me",
+      description="Count your smiles",
+      guild_ids=[constants.MACS_GUILD_ID, constants.DEV_GUILD_ID])
   async def me_slash(self, ctx: SlashContext):
     """Check your score
 
     Args:
         ctx (Context): Invocation context
     """
+    if not self.cog_check(ctx):
+      return
+
     author: Union[User, Member] = ctx.author
     await ctx.send(
         f"You have smiled **{self.reaction_counts[author.id]}** times")
@@ -164,15 +171,19 @@ class SmileLeaderboard(commands.Cog):
     await ctx.send(
         f"{user.name} has smiled **{self.reaction_counts[user.id]}** times")
 
-  @cog_ext.cog_slash(name="score",
-                     description="Count someones smiles",
-                     guild_ids=[constants.MACS_GUILD_ID])
+  @cog_ext.cog_slash(
+      name="score",
+      description="Count someones smiles",
+      guild_ids=[constants.MACS_GUILD_ID, constants.DEV_GUILD_ID])
   async def score_slash(self, ctx: SlashContext, user_id: str):
     """Check someone elses score
 
     Args:
         ctx (Context): Invocation context
     """
+    if not self.cog_check(ctx):
+      return
+
     user = await self.bot.fetch_user(int(user_id))
     await ctx.send(
         f"{user.name} has smiled **{self.reaction_counts[user.id]}** times")

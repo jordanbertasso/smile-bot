@@ -11,8 +11,6 @@ def is_jordan():
   return commands.check(predicate)
 
 
-def in_botspam():
-  def predicate(ctx: Context):
-    return ctx.channel.id == constants.BOT_SPAM_CHANNEL_ID
-
-  return commands.check(predicate)
+def in_botspam(ctx: Context):
+  return ctx.channel.id in (constants.BOT_SPAM_CHANNEL_ID,
+                            constants.DEV_BOT_SPAM_CHANNEL_ID)
