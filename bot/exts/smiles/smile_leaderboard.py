@@ -188,6 +188,7 @@ class SmileLeaderboard(commands.Cog):
     await ctx.send(
         f"{user.name} has smiled **{self.reaction_counts[user.id]}** times")
 
+  @commands.command(help='Set score')
   @is_jordan()
   async def set_score(self, ctx: Context, user_id: int, score: int):
     self.reaction_counts[user_id] = score
