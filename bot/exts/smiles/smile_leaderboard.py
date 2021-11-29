@@ -10,7 +10,7 @@ from discord_slash import SlashContext, cog_ext
 from loguru import logger
 
 from ... import constants
-from ...util.checks import in_botspam, is_jordan
+from ...util.checks import in_botspam, is_jordan, is_bitcoin
 
 
 class SmileLeaderboard(commands.Cog):
@@ -67,6 +67,17 @@ class SmileLeaderboard(commands.Cog):
       self.reaction_counts[user.id] -= 1
       self.save_reaction_counts()
       logger.info(self.reaction_counts)
+
+  @commands.Cog.listener()
+  async def on_message(self, message: Message):
+    # don't listen in private messages
+    if message.channel.type == ChannelType.private:
+      return
+    # only respond if it's bitcoin (rekt)
+    if not is_bitcoin():
+      return
+    # add :pepesmile: to his message
+    await message.add_reaction("914480263868854322")
 
   @commands.command(
       aliases=['lb'],
