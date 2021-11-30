@@ -2,7 +2,7 @@ import json
 from collections import defaultdict
 from typing import Optional, Union
 
-from discord import Embed, Emoji, Member, PartialEmoji, Reaction, User, utils
+from discord import Embed, Emoji, Member, PartialEmoji, Reaction, User, Message, utils
 from discord.enums import ChannelType
 from discord.ext import commands
 from discord.ext.commands.context import Context
@@ -67,6 +67,20 @@ class SmileLeaderboard(commands.Cog):
       self.reaction_counts[user.id] -= 1
       self.save_reaction_counts()
       logger.info(self.reaction_counts)
+
+  @commands.Cog.listener()
+  async def on_message(self, message: Message):
+    # don't listen in private messages
+    if message.channel.type == ChannelType.private:
+      return
+    # only respond if it's bitcoin (rekt)
+    if message.author.id == constants.BITCOIN_ID:
+      # add :pepesmile: to his message
+      smile = self.bot.get_emoji(constants.PEPE_SMILE_ID)
+      # 10/10 debugging
+      #print(constants.PEPE_SMILE_ID)
+      #print(smile)
+      await message.add_reaction(smile)
 
   @commands.command(
       aliases=['lb'],
